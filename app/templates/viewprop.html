@@ -15,6 +15,7 @@
                       <th>Last Name</th>
                       <th>Age</th>
                       <th>Gender</th>
+                      <th>Position</th>
                       <th>Date of Birth</th>
                       <th>Email Address</th>
                       <th>Phone Number</th>
@@ -27,19 +28,19 @@
                       <td>{{ info.l_name }}</td>
                       <td>{{ info.age }}</td>
                       <td>{{ info.gender }}</td>
+                      <td>{{ info.position }}</td>
                       <td>{{ info.dob }}</td>
                       <td>{{ info.email }}</td>
                       <td>{{ info.phonenum }}</td>
                       <td>{{ info.date_added }}</td>
                     </tr>
-                </table>
-                
+                </table> 
             </div>
             <br>
             <br>
             <div class="card text-left" style="width: 48rem; " id = "card">
                 <div class="card-body">
-                <form  action="{{ url_for('addmember') }}" method="POST" >
+                <form  action="{{ url_for('viewprop',id=info.id) }}" method="POST" >
                   
                   {{ form.csrf_token }}
                 
@@ -47,19 +48,19 @@
                     <div class="col-auto">
                       <div class="form-group">
                         <h6>{{ form.f_name.label }}</h6>
-                          {{ form.f_name(class="form-control",placeholder="John",required='required') }}
+                          {{ form.f_name(class="form-control",placeholder="John",required='required', value =info.f_name ) }}
                         </div>
                     </div>
                     <div class="col-auto">
                       <div class="form-group">
                         <h6>{{ form.l_name.label }}</h6>
-                          {{ form.l_name(class="form-control",placeholder="Jay",required='required') }}
+                          {{ form.l_name(class="form-control",placeholder="Jay",required='required', value =info.l_name ) }}
                         </div>
                     </div>
                     <div class="col-auto">
                       <div class="form-group">
                         <h6>{{ form.m_name.label }}</h6>
-                          {{ form.m_name(class="form-control",placeholder="Jamaal-Ajani",required='required') }}
+                          {{ form.m_name(class="form-control",placeholder="Jamaal-Ajani",required='required' , value = info.m_name ) }}
                         </div>
                     </div>
                   </div>
@@ -68,14 +69,14 @@
                   <div class="row mb-3">
                     <div class="form-group">
                     <h6>{{ form.position.label }}</h6>
-                      {{ form.position(class="form-control",placeholder="",rows=10, cols=40,required='required') }}
+                      {{ form.position(class="form-control",placeholder="",required='required', value = info.position ) }}
                     </div>
                   </div>  
                 
                   <div class="row mb-3">
                     <div class="form-group">
                     <h6>{{ form.address.label }}</h6>
-                      {{ form.address(class="form-control",placeholder="",rows=10, cols=40,required='required') }}
+                      {{ form.address(class="form-control",placeholder="",required='required' , value = info.address ) }}
                     </div>
                   </div>  
                   
@@ -83,14 +84,14 @@
                     <div class="col-auto">
                       <div class="form-group">
                       <h6>{{ form.phonenum.label }}</h6>
-                          {{ form.phonenum(class="form-control",placeholder="3",required='required') }}
+                          {{ form.phonenum(class="form-control",placeholder="3",required='required', value = info.phonenum ) }}
                         </div>
                       </div>
                 
                       <div class="col-auto">
                         <div class="form-group">
                         <h6>{{ form.email.label }}</h6>
-                          {{ form.email(class="form-control",placeholder="2",required='required') }}
+                          {{ form.email(class="form-control",placeholder="2",required='required', value = info.email ) }}
                         </div>
                       </div>
                   </div>    
@@ -98,7 +99,7 @@
                       <div class="col-auto">
                         <div class="form-group">
                         <h6>{{ form.age.label }}</h6>
-                          {{ form.age(class="form-control",placeholder="15,000,000",required='required') }}
+                          {{ form.age(class="form-control",placeholder="",required='required', value = info.age ) }}
                         </div>
                       </div>
                 
@@ -113,14 +114,14 @@
                   <div class="row mb-3">
                     <div class="form-group">
                       <h6>{{ form.dob.label }}</h6>
-                      {{ form.dob(class="form-control",placeholder="10 Waterloo Rd",required='required') }}
+                      {{ form.dob(class="form-control",placeholder="",required='required', value = info.dob ) }}
                     </div>
                   </div>
                   
                   
                   
                   <div class="col-12">
-                    <button type="submit" name="submit" class="btn btn-primary">Add Member</button>
+                    <button type="submit" name="submit" class="btn btn-primary">Update Member</button>
                   </div>
                   
                 </form>

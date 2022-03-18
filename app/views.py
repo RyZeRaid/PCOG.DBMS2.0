@@ -88,12 +88,33 @@ def updatemember():
 ###
 # The functions below should be applicable to all Flask apps.
 ###
-@app.route('/members/<int:id>')
+@app.route('/members/<int:id>',methods=["POST", "GET"])
 def viewprop(id):
-    myform = Addmember()
-    mem_info = Member.query.get_or_404(id)
-    return render_template('viewprop.html', form = myform, info = mem_info)
-
+    form = Addmember()
+    info = Member.query.get_or_404(id)
+    
+    if request.method == "POST" and form.validate_on_submit(): 
+        
+        info.position = request.form['position']
+        info.l_name = request.form['l_name']
+        info.f_name = request.form['f_name']
+        info.m_name = request.form['m_name']
+        info.age = request.form['age']
+        info.gender = request.form['gender']
+        info.phonenum = request.form['phonenum'] 
+        info.dob = request.form['dob']
+        info.email = request.form['email']
+        info.address = request.form['address']
+        try:
+            db.session.commit()
+            flash("Updated member")
+            return render_template('viewprop.html', form = form, info = info)
+        except:
+            flash("Error didnt update member", 'danger')
+            return render_template('viewprop.html', form = form, info = info)
+    else:
+        return render_template('viewprop.html', form = form, info = info)
+    
 
 def get_member_info():
     prop_info = Member.query.all()
