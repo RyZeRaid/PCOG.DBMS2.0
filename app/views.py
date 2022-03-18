@@ -33,30 +33,32 @@ def addmember():
 
     if request.method == 'GET':
         return render_template('Addmember.html',form=myform )
+    print("i see it now")
+    if request.method == 'POST':
+        if myform.validate_on_submit():
+            print("see the error yet ?")
+            position = myform.position.data
+            l_name = myform.l_name.data
+            f_name = myform.f_name.data
+            m_name = myform.m_name.data
+            age = myform.age.data
+            gender = myform.gender.data
+            phonenum = myform.phonenum.data 
+            dob = myform.dob.data
+            email = myform.email.data
+            address = myform.address.data
+            pri = 0
+            print(type(pri))
+            member = Member(position = position, l_name = l_name, f_name = f_name,
+                            m_name = m_name, age = age, gender = gender,
+                            phonenum = phonenum , dob = dob, email = email,
+                            address = address, pri = pri) 
+            print("came here")
+            db.session.add(member)
+            db.session.commit()
 
-    if request.method == 'POST' and myform.validate_on_submit():
-        position = position.title.data
-        l_name = l_name.title.data
-        f_name = f_name.title.data
-        m_name = m_name.title.data
-        age = age.title.data
-        gender = gender.title.data
-        phonenum = phonenum.title.data 
-        dob = dob.title.data
-        email = email.title.data
-        address = address.title.data
-        pri = 0
-        
-        member = Member(position = position, l_name = l_name, f_name = f_name,
-                        m_name = m_name, age = age, gender = gender,
-                        phonenum = phonenum , dob = dob, email = email,
-                        address = address, pri = pri) 
-        
-        db.session.add(member)
-        db. session.commit()
-
-        #flash('Successfully added a new property','success')
-        return redirect(url_for('home'))
+            flash('Successfully added a new property','success')
+            return redirect(url_for('home'))
 
     flash_errors(myform)
     return render_template('Addmember.html', form = myform)
