@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1 class="page-header" id="pgheader">Add New Property</h1>
+
+<div class="card text-left" style="width: 48rem; " id = "card">
+<div class="card-body">
+<form  action="{{ url_for('addmember') }}" method="POST" enctype="multipart/form-data">
+  
+  {{ form.csrf_token }}
+
+  <div class="row mb-3">
+    <div class="col-auto">
+      <div class="form-group">
+        <h6>{{ form.f_name.label }}</h6>
+          {{ form.f_name(class="form-control",placeholder="John",required='required') }}
+        </div>
+    </div>
+    <div class="col-auto">
+      <div class="form-group">
+        <h6>{{ form.l_name.label }}</h6>
+          {{ form.l_name(class="form-control",placeholder="Jay",required='required') }}
+        </div>
+    </div>
+    <div class="col-auto">
+      <div class="form-group">
+        <h6>{{ form.m_name.label }}</h6>
+          {{ form.m_name(class="form-control",placeholder="Jamaal-Ajani",required='required') }}
+        </div>
+    </div>
+  </div>
+  
+  
+  <div class="row mb-3">
+    <div class="form-group">
+    <h6>{{ form.address.label }}</h6>
+      {{ form.address(class="form-control",placeholder="",rows=10, cols=40,required='required') }}
+    </div>
+  </div>  
+  
+  <div class = "row g-4">
+    <div class="col-auto">
+      <div class="form-group">
+      <h6>{{ form.phonenum.label }}</h6>
+          {{ form.phonenum(class="form-control",placeholder="3",required='required') }}
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <div class="form-group">
+        <h6>{{ form.email.label }}</h6>
+          {{ form.email(class="form-control",placeholder="2",required='required') }}
+        </div>
+      </div>
+  </div>    
+  <div class = "row g-4">
+      <div class="col-auto">
+        <div class="form-group">
+        <h6>{{ form.age.label }}</h6>
+          {{ form.age(class="form-control",placeholder="15,000,000",required='required') }}
+        </div>
+      </div>
+
+      <div class="col-auto">
+        <div class = "form-select">
+        <h6>{{ form.gender.label }}</h6>
+          {{ form.gender }}
+        </div>
+      </div>  
+  </div>
+  
+  <div class="row mb-3">
+    <div class="form-group">
+      <h6>{{ form.dob.label }}</h6>
+      {{ form.dob(class="form-control",placeholder="10 Waterloo Rd",required='required') }}
+    </div>
+  </div>
+  
+  
+  
+  <div class="col-12">
+    <button type="submit" name="submit" class="btn btn-primary">Add Member</button>
+  </div>
+  
+</form>
+</div>
+</div>
+{% endblock %}

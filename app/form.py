@@ -3,13 +3,15 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField,IntegerField, SelectField,validators, TextAreaField
 from wtforms.validators import InputRequired, DataRequired , Length
 
-class PropertyForm(FlaskForm):
-    title = StringField('Property Title', validators=[InputRequired()])
-    num_bed = IntegerField('No. of Rooms', validators=[InputRequired()])
-    num_bath = IntegerField('No. of Bathrooms', validators=[InputRequired()])
-    location = StringField('Location', validators=[InputRequired()])
-    photo = FileField('Photo ', validators=[FileRequired(),FileAllowed(['jpg', 'png'])])
-    price = IntegerField('Price', validators=[InputRequired()])
-    type = SelectField('Type', choices = [('House', 'House'),('Appartment','Appartment')])
-    text = TextAreaField('Description',  validators=[DataRequired(),InputRequired(),Length(max=700)])
+class Addmember(FlaskForm):
+    position = StringField('Position', validators=[InputRequired()])
+    age = IntegerField('Age', validators=[InputRequired()])
+    f_name = StringField('First Name', validators=[InputRequired()])
+    l_name = StringField('Last Name', validators=[InputRequired()])
+    m_name = StringField('Middle Name', validators=[InputRequired()])
+    dob = StringField('Date of Birth', validators=[InputRequired()])
+    gender = SelectField('Gender', choices = [('Male', 'Male'),('Female','Female')])
+    address = StringField('Address',  validators=[DataRequired(),InputRequired(),Length(max=700)])
+    phonenum = IntegerField('Phone Number', validators=[InputRequired()])
+    email = StringField('Email Address', validators=[InputRequired()])
     

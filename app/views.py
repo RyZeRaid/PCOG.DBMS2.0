@@ -8,8 +8,8 @@ from operator import length_hint
 import os
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,send_from_directory 
-from .models import PropertiesProfie
-from .form import PropertyForm
+from .models import Member
+from .form import Addmember
 from werkzeug.utils import secure_filename
 
 ###
@@ -27,49 +27,48 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
 
-@app.route("/properties/create",methods=["POST", "GET"])
-def create():
-    myform = PropertyForm()
+@app.route("/Member/Addmember",methods=["POST", "GET"])
+def addmember():
+    myform = Addmember()
 
     if request.method == 'GET':
-        return render_template('create.html',form=myform )
+        return render_template('Addmember.html',form=myform )
 
     if request.method == 'POST' and myform.validate_on_submit():
+        position = position.title.data
+        l_name = l_name.title.data
+        f_name = f_name.title.data
+        m_name = m_name.title.data
+        age = age.title.data
+        gender = gender.title.data
+        phonenum = phonenum.title.data 
+        dob = dob.title.data
+        email = email.title.data
+        address = address.title.data
+        pri = 0
         
-        photo =  myform.photo.data  
-        filename = secure_filename(photo.filename)
-        photo.save((os.path.join(app.config['UPLOAD_FOLDER'], filename)))
+        member = Member(position = position, l_name = l_name, f_name = f_name,
+                        m_name = m_name, age = age, gender = gender,
+                        phonenum = phonenum , dob = dob, email = email,
+                        address = address, pri = pri) 
         
-        title = myform.title.data
-        num_bed = myform.num_bed.data
-        num_bath = myform.num_bath.data
-        location  = myform.location.data
-        type_ = myform.type.data
-        price = myform.price.data
-        text_ =  myform.text.data
-        
-        propinfo = PropertiesProfie(title = title , 
-                                    num_bed = num_bed, num_bath = num_bath, 
-                                    location = location, type = type_ ,
-                                    price = price, text = text_, photo_name = filename) 
-        
-        db.session.add(propinfo)
+        db.session.add(member)
         db. session.commit()
 
         #flash('Successfully added a new property','success')
         return redirect(url_for('home'))
 
     flash_errors(myform)
-    return render_template('create.html', form = myform)
+    return render_template('Addmember.html', form = myform)
 
 @app.route('/properties')
-def showprop():
+def showmember():
     
-    filename = get_uploaded_images()
-    if get_prop_info() != []:
+    
+    if get_member_info() != []:
         rootdir = 'uploads/'
-        lenght =length_hint(get_prop_info())
-        return render_template('properties.html', filenames= filename , prop = get_prop_info() ,rootdiri = rootdir,len = lenght)
+        lenght =length_hint(get_member_info())
+        return render_template('properties.html',  member = get_member_info() ,rootdiri = rootdir,len = lenght)
     else: 
         flash("database is empty no properties to show", 'danger')
         return redirect('properties.html')
@@ -80,25 +79,12 @@ def showprop():
 ###
 @app.route('/properties/<int:id>')
 def viewprop(id):
-    view_prop = PropertiesProfie.query.get_or_404(id)
+    view_prop = Member.query.get_or_404(id)
     return render_template('viewprop.html', view_prop = view_prop,rootdiri = 'uploads/')
 
 
-@app.route('/properties/create/<filename>')
-def get_image(filename):
-    return send_from_directory(os.path.join(os.getcwd(),app.config['UPLOAD_FOLDER']), path=filename)
-
-
-def get_uploaded_images():
-    rootdir = os.getcwd()
-    file_store=[]
-    for subdir, dirs, files in os.walk('app/static/uploads'):
-        for file in files:
-            file_store.append(os.path.join(rootdir,subdir, file))
-    return file_store
-
-def get_prop_info():
-    prop_info = PropertiesProfie.query.all()
+def get_member_info():
+    prop_info = Member.query.all()
     return prop_info
 
 # Display Flask WTF errors as Flash messages

@@ -1,29 +1,33 @@
 from . import db
 
-class PropertiesProfie(db.Model):
+class Member(db.Model):
 
-    __tablename__ = 'properties_profiles'
+    __tablename__ = 'members'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(180),nullable=False)
-    location = db.Column(db.String(280),nullable=False)
-    num_bath = db.Column(db.Integer,nullable=False)
-    num_bed = db.Column(db.Integer,nullable=False)
-    price = db.Column(db.Integer,nullable=False)
-    #photo= db.Column(db.LargeBinary,unique=True,nullable=False)
-    photo_name= db.Column(db.Text,nullable=False)
-    type = db.Column(db.String(15))
-    text = db.Column(db.String(800))
+    position = db.Column(db.String(80),nullable=False)
+    f_name = db.Column(db.String(80),nullable=False)
+    l_name = db.Column(db.String(80),nullable=False)
+    m_name = db.Column(db.String(80),nullable=False)
+    age = db.Column(db.Integer,nullable=False)
+    gender = db.Column(db.String(8),nullable=False)
+    phonenum = db.Column(db.Integer,nullable=False)
+    dob = db.Column(db.String(10),nullable=False)
+    email = db.Column(db.String(120),nullable=False)
+    pri = db.Column(db.Integer,nullable=False)
+    address = db.Column(db.String(300),nullable=False)
 
 
-    def __init__(self, type ,title,photo_name, location, num_bath, num_bed, price,text):
-        self.title = title 
-        self.location = location
-        self.num_bath = num_bath
-        self.num_bed = num_bed
-        self.price = price  
-        #self.photo = photo
-        self.type = type
-        self.photo_name = photo_name
-        self.text = text
+    def __init__(self, position ,f_name,l_name, m_name, age, gender,phonenum,dob,email,pri, address):
+        self.position = position
+        self.l_name = l_name
+        self.f_name = f_name
+        self.m_name = m_name
+        self.age = age
+        self.gender = gender
+        self.phonenum = phonenum  
+        self.dob = dob
+        self.email = email
+        self.pri = pri
+        self.address = address
 
