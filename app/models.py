@@ -1,4 +1,5 @@
 from . import db
+from datetime import datetime
 
 class Member(db.Model):
 
@@ -16,6 +17,7 @@ class Member(db.Model):
     email = db.Column(db.String(120),nullable=False)
     pri = db.Column(db.Integer,nullable=False)
     address = db.Column(db.String(800),nullable=False)
+    date_added = db.Column(db.DateTime, default = datetime.utcnow)
 
 
     def __init__(self, position ,f_name,l_name, m_name, age, gender,phonenum,dob,email,pri, address):

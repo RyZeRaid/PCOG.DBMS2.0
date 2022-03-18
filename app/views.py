@@ -9,7 +9,7 @@ import os
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,send_from_directory 
 from .models import Member
-from .form import Addmember
+from .form import Addmember, searchForm
 from werkzeug.utils import secure_filename
 
 ###
@@ -25,7 +25,7 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name=" ___")
 
 @app.route("/Member/Addmember",methods=["POST", "GET"])
 def addmember():
@@ -33,56 +33,66 @@ def addmember():
 
     if request.method == 'GET':
         return render_template('Addmember.html',form=myform )
-    print("i see it now")
-    if request.method == 'POST':
-        if myform.validate_on_submit():
-            print("see the error yet ?")
-            position = myform.position.data
-            l_name = myform.l_name.data
-            f_name = myform.f_name.data
-            m_name = myform.m_name.data
-            age = myform.age.data
-            gender = myform.gender.data
-            phonenum = myform.phonenum.data 
-            dob = myform.dob.data
-            email = myform.email.data
-            address = myform.address.data
-            pri = 0
-            print(type(pri))
-            member = Member(position = position, l_name = l_name, f_name = f_name,
-                            m_name = m_name, age = age, gender = gender,
-                            phonenum = phonenum , dob = dob, email = email,
-                            address = address, pri = pri) 
-            print("came here")
-            db.session.add(member)
-            db.session.commit()
+    
+    if request.method == 'POST'and myform.validate_on_submit():
+        
+        position = myform.position.data
+        l_name = myform.l_name.data
+        f_name = myform.f_name.data
+        m_name = myform.m_name.data
+        age = myform.age.data
+        gender = myform.gender.data
+        phonenum = myform.phonenum.data 
+        dob = myform.dob.data
+        email = myform.email.data
+        address = myform.address.data
+        pri = 0
+       
+        member = Member(position = position, l_name = l_name, f_name = f_name,
+                        m_name = m_name, age = age, gender = gender,
+                        phonenum = phonenum , dob = dob, email = email,
+                        address = address, pri = pri) 
+        
+        db.session.add(member)
+        db.session.commit()
 
-            flash('Successfully added a new property','success')
-            return redirect(url_for('home'))
+        flash('Successfully added a new property','success')
+        return redirect(url_for('home'))
 
     flash_errors(myform)
     return render_template('Addmember.html', form = myform)
 
-@app.route('/properties')
+@app.route('/search/members')
 def showmember():
-    
-    
+    myform = searchForm()  
     if get_member_info() != []:
-        rootdir = 'uploads/'
+        
         lenght =length_hint(get_member_info())
-        return render_template('properties.html',  member = get_member_info() ,rootdiri = rootdir,len = lenght)
+        return render_template('Searchmember.html', form = myform, member = get_member_info() ,rootdiri = "rootdir",len = lenght)
     else: 
         flash("database is empty no properties to show", 'danger')
-        return redirect('properties.html')
+        return redirect('Searchmember.html')
+
+@app.route('/update/members')
+def updatemember():
+    myform = searchForm()  
+    if get_member_info() != []:
+        
+        lenght =length_hint(get_member_info())
+        return render_template('updatemember.html', form = myform, member = get_member_info() ,rootdiri = "rootdir",len = lenght)
+    else: 
+        flash("database is empty no properties to show", 'danger')
+        return redirect('updatehmember.html')
     
 
 ###
 # The functions below should be applicable to all Flask apps.
 ###
-@app.route('/properties/<int:id>')
+@app.route('/members/<int:id>')
 def viewprop(id):
-    view_prop = Member.query.get_or_404(id)
-    return render_template('viewprop.html', view_prop = view_prop,rootdiri = 'uploads/')
+    myform = Addmember()
+    mem_info = Member.query.get_or_404(id)
+    return render_template('viewprop.html', form = myform, info = mem_info)
 
 
 def get_member_info():

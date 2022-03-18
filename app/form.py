@@ -15,3 +15,6 @@ class Addmember(FlaskForm):
     phonenum = StringField('Phone Number', validators=[InputRequired()])
     email = StringField('Email Address', validators=[InputRequired()])
     
+class searchForm(FlaskForm):
+    Search = StringField('Search', validators=[InputRequired()])
+    
