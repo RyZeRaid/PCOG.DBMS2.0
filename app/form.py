@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField,IntegerField, SelectField,validators, TextAreaField
+from wtforms import StringField,IntegerField, SelectField, validators, TextAreaField, PasswordField, BooleanField, RadioField
 from wtforms.validators import InputRequired, DataRequired , Length
 
 class Addmember(FlaskForm):
@@ -16,5 +16,12 @@ class Addmember(FlaskForm):
     email = StringField('Email Address', validators=[InputRequired()])
     
 class searchForm(FlaskForm):
-    Search = StringField('Search', validators=[InputRequired()])
-    
+    Search = StringField('Search')
+    drop = SelectField('SearchBy', choices = [('Male', 'Male'),('Female','Female'),('f_name','f_name'),('l_name','l_name'),('m_name','m_name'),('Age','Age'),('general','general')], validators=[InputRequired()])
+    order = RadioField('Order', choices=[('Ac','Ac'),('Dc','Dc'),('None','None')])
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
+    remember_me = BooleanField('Remember me')
