@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField,IntegerField, SelectField, validators, TextAreaField, PasswordField, BooleanField, RadioField
-from wtforms.validators import InputRequired, DataRequired , Length
+from wtforms import StringField,IntegerField, SelectField, SubmitField, TextAreaField, PasswordField, BooleanField, RadioField
+from wtforms.validators import InputRequired, DataRequired, Length
 
 class Addmember(FlaskForm):
     position = StringField('Position', validators=[InputRequired()])
@@ -25,3 +25,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
     remember_me = BooleanField('Remember me')
+
+class Deletemember(FlaskForm):
+    submit = SubmitField('Submit')
+    Cancel = SubmitField('Cancel')

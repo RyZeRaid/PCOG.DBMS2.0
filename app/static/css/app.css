@@ -37,4 +37,13 @@ body {
     text-align: center;
   }
 
- 
+ p1{
+   background-color: rgb(136, 57, 1);
+   color: white;
+   padding: 5px 10px;
+   border-radius: 5px;
+   margin: 0 5px;
+   -webkit-box-decoration-break: clone;
+   -moz-background-inline-policy: clone;
+   box-decoration-break: clone;
+ }

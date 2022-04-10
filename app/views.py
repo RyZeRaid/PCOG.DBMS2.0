@@ -8,10 +8,10 @@ from operator import length_hint
 import os
 from sre_constants import SUCCESS
 from app import app, db,login_manager
-from flask import render_template, request, redirect, url_for,flash,send_from_directory 
+from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from .models import Member,UserProfile
-from .form import Addmember, searchForm, LoginForm
+from .form import Addmember, searchForm, LoginForm, Deletemember
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
@@ -73,11 +73,9 @@ def addmember():
 def showmember():
     myform = searchForm()  
     if get_member_info() != []:
-        
-        lenght =length_hint(get_member_info())
-        return render_template('Viewmember.html', form = myform, member = get_member_info() ,rootdiri = "rootdir",len = lenght)
+        return render_template('Viewmember.html', form = myform, member = get_member_info() )
     else: 
-        flash("database is empty no properties to show", 'danger')
+        flash("database is empty no members to show", 'danger')
         return redirect('Viewmember.html')
 
 
@@ -229,11 +227,29 @@ def updatemember(id):
     else:
         return render_template('Updatemember.html', form = form, info = info)
     
-@app.route('/remove/member/<int:id>')
+@app.route('/remove/member/<int:id>',methods = ["POST","GET"])
 @login_required
 def deletemember(id):
-    pass
+    form = Deletemember()
+    info = Member.query.get_or_404(id)
+    
+    #check if user wanted to cancel the deletion of the member and redirect tem to home page
+    if form.Cancel.data:
+        flash('Did not delete member.', 'success')
+        return redirect(url_for('home'))
 
+    #if the user agreed to delete the member from the database
+    if request.method == "POST" and form.validate_on_submit(): 
+        try:
+            db.session.delete(info)
+            db.session.commit()
+            flash("Deleted member from database Successfully :) ",'success')
+            return redirect('Viewmember.html', form = form, info = get_member_info())
+        except:
+            flash("Error there was a problem deleting member Please try again", 'danger')
+            return redirect('Viewmember.html', form = form, info = get_member_info())
+    else:
+        return render_template('Deletemember.html', form = form, info = info)
 
 ###
 # The functions below should be applicable to all Flask apps.
@@ -243,7 +259,7 @@ def showinfo(place):
     if get_member_info() != []:
         
         lenght =length_hint(get_member_info())
-        render_template(place, form = myform, member = get_member_info() ,rootdiri = "rootdir",len = lenght)
+        render_template(place, form = myform, member = get_member_info())
     else: 
         flash("database is empty no members to show", 'danger')
         return redirect(place)

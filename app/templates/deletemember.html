@@ -2,127 +2,59 @@
 
 {% block main %}
 <h1 class="page-header"></h1>
-
+{% include 'flash_messages.html' %}
     
         <div class="card" >
             <div class="container_view">
-                
-                <table class="table-primary">
-                    <tr class="table-info">
-                      <th>ID#</th>
-                      <th>First Name</th>
-                      <th>Middle Name</th>
-                      <th>Last Name</th>
-                      <th>Age</th>
-                      <th>Gender</th>
-                      <th>Position</th>
-                      <th>Date of Birth</th>
-                      <th>Email Address</th>
-                      <th>Phone Number</th>
-                      <th>Date Added</th>
-                    </tr>
-                    <tr>
-                      <td>{{ info.id }}</td>
-                      <td>{{ info.f_name }}</td>
-                      <td>{{ info.m_name }}</td>
-                      <td>{{ info.l_name }}</td>
-                      <td>{{ info.age }}</td>
-                      <td>{{ info.gender }}</td>
-                      <td>{{ info.position }}</td>
-                      <td>{{ info.dob }}</td>
-                      <td>{{ info.email }}</td>
-                      <td>{{ info.phonenum }}</td>
-                      <td>{{ info.date_added }}</td>
-                    </tr>
-                </table> 
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                      <tr class="table-info">
+                        <th scope="col">ID#</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Middle Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Position</th>
+                        <th scope="col">Date of Birth</th>
+                        <th scope="col">Email Address</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Date Added</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">{{ info.id }}</th>
+                        <td>{{ info.f_name }}</td>
+                        <td>{{ info.m_name }}</td>
+                        <td>{{ info.l_name }}</td>
+                        <td>{{ info.age }}</td>
+                        <td>{{ info.gender }}</td>
+                        <td>{{ info.position }}</td>
+                        <td>{{ info.dob }}</td>
+                        <td>{{ info.email }}</td>
+                        <td>{{ info.phonenum }}</td>
+                        <td>{{ info.date_added }}</td>
+                      </tr>
+    
+                  </tbody>
+                </table>                
             </div>
             <br>
-            <br>
+            
             <div class="card text-left" style="width: 48rem; " id = "card">
                 <div class="card-body">
-                <form  action="{{ url_for('updatemember',id=info.id) }}" method="POST" >
+                    <p1>Are you sure you would like to remove this member from the database?</p1>
+                <hr>
+                <form  action="{{ url_for('deletemember',id=info.id) }}" method="POST" >
                   
                   {{ form.csrf_token }}
-                
-                  <div class="row mb-3">
-                    <div class="col-auto">
-                      <div class="form-group">
-                        <h6>{{ form.f_name.label }}</h6>
-                          {{ form.f_name(class="form-control",placeholder="John",required='required', value =info.f_name ) }}
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                      <div class="form-group">
-                        <h6>{{ form.l_name.label }}</h6>
-                          {{ form.l_name(class="form-control",placeholder="Jay",required='required', value =info.l_name ) }}
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                      <div class="form-group">
-                        <h6>{{ form.m_name.label }}</h6>
-                          {{ form.m_name(class="form-control",placeholder="Jamaal-Ajani",required='required' , value = info.m_name ) }}
-                        </div>
-                    </div>
-                  </div>
-                  
-                  
-                  <div class="row mb-3">
-                    <div class="form-group">
-                    <h6>{{ form.position.label }}</h6>
-                      {{ form.position(class="form-control",placeholder="",required='required', value = info.position ) }}
-                    </div>
-                  </div>  
-                
-                  <div class="row mb-3">
-                    <div class="form-group">
-                    <h6>{{ form.address.label }}</h6>
-                      {{ form.address(class="form-control",placeholder="",required='required' , value = info.address ) }}
-                    </div>
-                  </div>  
-                  
-                  <div class = "row g-4">
-                    <div class="col-auto">
-                      <div class="form-group">
-                      <h6>{{ form.phonenum.label }}</h6>
-                          {{ form.phonenum(class="form-control",placeholder="3",required='required', value = info.phonenum ) }}
-                        </div>
-                      </div>
-                
-                      <div class="col-auto">
-                        <div class="form-group">
-                        <h6>{{ form.email.label }}</h6>
-                          {{ form.email(class="form-control",placeholder="2",required='required', value = info.email ) }}
-                        </div>
-                      </div>
-                  </div>    
-                  <div class = "row g-4">
-                      <div class="col-auto">
-                        <div class="form-group">
-                        <h6>{{ form.age.label }}</h6>
-                          {{ form.age(class="form-control",placeholder="",required='required', value = info.age ) }}
-                        </div>
-                      </div>
-                
-                      <div class="col-auto">
-                        <div class = "form-select">
-                        <h6>{{ form.gender.label }}</h6>
-                          {{ form.gender }}
-                        </div>
-                      </div>  
-                  </div>
-                  
-                  <div class="row mb-3">
-                    <div class="form-group">
-                      <h6>{{ form.dob.label }}</h6>
-                      {{ form.dob(class="form-control",placeholder="",required='required', value = info.dob ) }}
-                    </div>
-                  </div>
-                  
-                  
-                  
+
                   <div class="col-12">
-                    <button type="submit" name="submit" class="btn btn-primary">Update Member</button>
-                  </div>
+                    <button type="submit" name="submit"  class="btn btn-danger">Remove Member</button>
+                    {{ form.Cancel(class ="btn btn-primary" ) }}
+                    
+                 </div>
                   
                 </form>
                 </div>
