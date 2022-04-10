@@ -11,21 +11,8 @@ body {
       margin: 5px;
   }
 
-  
-  
    .type{
     background: #d5ec07;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin: 0 5px;
-    -webkit-box-decoration-break: clone;
-    -moz-background-inline-policy: clone;
-    box-decoration-break: clone;
-  }
-
-  .price{
-    background: #1b57fc;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -49,3 +36,5 @@ body {
   #pgheader{
     text-align: center;
   }
+
+ 
