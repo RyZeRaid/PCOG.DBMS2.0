@@ -11,10 +11,11 @@ from app import app, db,login_manager
 from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from .models import Member,UserProfile
-from .form import Addmember, searchForm, LoginForm, Deletemember
+from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
+from datetime import date
 
 ###
 # Routing for your application.
@@ -76,7 +77,7 @@ def showmember():
         return render_template('Viewmember.html', form = myform, member = get_member_info() )
     else: 
         flash("database is empty no members to show", 'danger')
-        return redirect('Viewmember.html')
+        return render_template('Viewmember.html', form = myform, member = get_member_info() )
 
 
 @app.route('/search/members',methods=["POST", "GET"])
@@ -194,7 +195,28 @@ def searchmember():
                 info = info.filter_by(age = Search).all()
             if info == []:
                 flash(message,'danger')    
-                
+        # ID Number
+        message = "There are no members currently with the ID Number "+ Search + "."
+        if drop == "Id" and order =="Ac":
+            if Search == "":
+                info = info.order_by(Member.id).all()
+            else:
+                info = info.filter_by( id = Search ).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "Id" and order =="Dc":
+            if Search == "":
+               
+                info = info.order_by(desc(Member.id)).all()
+            else:
+                info = info.filter_by( id = Search ).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "Id":
+            
+            info = info.filter_by( id = Search ).all()
+            if info == []:
+                flash(message,'danger')       
             
         return render_template('Searchmember.html',form=myform , Search = Search,drop = drop, member = info, order= order )
 
@@ -202,8 +224,12 @@ def searchmember():
 @app.route('/update/members/<int:id>',methods=["POST", "GET"])
 @login_required
 def updatemember(id):
-    form = Addmember()
+    form = UpdateForm()
     info = Member.query.get_or_404(id)
+    
+    if form.Cancel.data:
+        flash('Did not Update member.', 'success')
+        return render_template('Viewmember.html', form = searchForm() , member = get_member_info())
     
     if request.method == "POST" and form.validate_on_submit(): 
         
@@ -217,10 +243,11 @@ def updatemember(id):
         info.dob = request.form['dob']
         info.email = request.form['email']
         info.address = request.form['address']
+        info.date_added = date.today()
         try:
             db.session.commit()
-            flash("Updated member Successfully :) ",'success')
-            return render_template('Updatemember.html', form = form, info = info)
+            flash("Updated member Successfully testibng :) ",'success')
+            return render_template('Viewmember.html', form = searchForm(), member = get_member_info())
         except:
             flash("Error didnt update member", 'danger')
             return render_template('Updatemember.html', form = form, info = info)
@@ -230,13 +257,13 @@ def updatemember(id):
 @app.route('/remove/member/<int:id>',methods = ["POST","GET"])
 @login_required
 def deletemember(id):
-    form = Deletemember()
+    form = DeleteForm()
     info = Member.query.get_or_404(id)
     
-    #check if user wanted to cancel the deletion of the member and redirect tem to home page
+    #check if user wanted to cancel the deletion of the member and redirect them to the view page
     if form.Cancel.data:
         flash('Did not delete member.', 'success')
-        return redirect(url_for('home'))
+        return render_template('Viewmember.html', form = searchForm() , member = get_member_info())
 
     #if the user agreed to delete the member from the database
     if request.method == "POST" and form.validate_on_submit(): 
@@ -244,10 +271,10 @@ def deletemember(id):
             db.session.delete(info)
             db.session.commit()
             flash("Deleted member from database Successfully :) ",'success')
-            return redirect('Viewmember.html', form = form, info = get_member_info())
+            return render_template('Viewmember.html', form = searchForm(), member = get_member_info())
         except:
             flash("Error there was a problem deleting member Please try again", 'danger')
-            return redirect('Viewmember.html', form = form, info = get_member_info())
+            return render_template('Viewmember.html', form = searchForm(), member = get_member_info())
     else:
         return render_template('Deletemember.html', form = form, info = info)
 
@@ -257,8 +284,6 @@ def deletemember(id):
 def showinfo(place):
     myform = searchForm()  
     if get_member_info() != []:
-        
-        lenght =length_hint(get_member_info())
         render_template(place, form = myform, member = get_member_info())
     else: 
         flash("database is empty no members to show", 'danger')
