@@ -5,7 +5,7 @@
 <form class="form-inline" action="{{ url_for('searchmember') }}" method="POST" >
  
     {{ form.csrf_token }}
-
+    {% include 'flash_messages.html' %}
     <div class="col-sm">
         <div class="form-group mx-sm-3 mb-2">
         <h6>{{ form.Search.label }}</h6>
@@ -51,24 +51,27 @@
 
 <div class="container_view">
 
-    <table class="table-primary">
+    <table class="table table-striped">
+      <thead class="thead-dark">
         <tr class="table-info">
-          <th>ID#</th>
-          <th>First Name</th>
-          <th>Middle Name</th>
-          <th>Last Name</th>
-          <th>Age</th>
-          <th>Gender</th>
-          <th>Position</th>
-          <th>Date of Birth</th>
-          <th>Email Address</th>
-          <th>Phone Number</th>
-          <th>Date Added</th>
-          <th>TO DO</th>
+          <th scope="col">ID#</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Middle Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Age</th>
+          <th scope="col">Gender</th>
+          <th scope="col">Position</th>
+          <th scope="col">Date of Birth</th>
+          <th scope="col">Email Address</th>
+          <th scope="col">Phone Number</th>
+          <th scope="col">Date Added</th>
+          <th scope="col">TO DO</th>
         </tr>
+      </thead>
+      <tbody>
     {% for info in member %}
         <tr>
-          <td>{{ info.id }}</td>
+          <th scope="row">{{ info.id }}</th>
           <td>{{ info.f_name }}</td>
           <td>{{ info.m_name }}</td>
           <td>{{ info.l_name }}</td>
@@ -79,10 +82,16 @@
           <td>{{ info.email }}</td>
           <td>{{ info.phonenum }}</td>
           <td>{{ info.date_added }}</td>
-          <td><a href="{{ url_for('updatemember',id=info.id) }}" class="btn btn-primary">Edit Member</a></td>
+          <td>
+            <table class="table-primary">
+              <td> <a href="{{ url_for('updatemember',id=info.id) }}" class="btn btn-primary" role="button">Edit Member</a> </td>
+              <td> <a href="{{ url_for('deletemember',id=info.id) }}" class="btn btn-danger" role="button">Remove Member</a> </td>
+            </table>
+          </td>
         </tr>
       
     {% endfor %}  
-    </table>
+    </tbody>
+  </table>
 </div>
 {% endblock %}

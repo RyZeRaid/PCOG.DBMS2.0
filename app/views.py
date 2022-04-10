@@ -85,10 +85,10 @@ def showmember():
 @login_required
 def searchmember():
     myform = searchForm()
-  
+    
     info = Member.query
     if request.method == 'GET':
-        print("didnt get there")
+        
         return render_template('Viewmember.html',form=myform )
     
     if request.method == 'POST'and myform.validate_on_submit():
@@ -98,100 +98,110 @@ def searchmember():
         order = myform.order.data
         print("this is drop ",drop)
         if drop == "general" :
-            flash("didnt work  (:(  ", 'danger')
+            flash("Please select what you would like to search by", 'danger')
             info =  info.order_by(Member.f_name ).all()
         
         print("this is what was searched",Search,drop, order)
         #Query the database by what to search by 
-
+        
+        #First Name
+        message= "There are no members currently with the first name "+ Search + "."
         if drop == "f_name" and order == "Ac":
-            print("sortedfirst name")
             if Search == "":
                 print("search feild was empty")
                 info = info.order_by(Member.f_name).all()
             else:
                 info = info.filter(Member.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
         elif drop == "f_name" and order =="Dc":
             if Search == "":
                 print("search feild was empty")
                 info = info.order_by(desc(Member.f_name)).all()
             else:
                 info = info.filter(Member.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
         elif drop == "f_name":
             print("first name",drop)
             info = info.filter(Member.f_name.like('%'+ Search +'%')).all()
-
+            if info == []:
+                flash(message,'danger')
         
+        # Last name
+        message = "There are no members currently with the Last Name "+ Search + "."
         if drop =="l_name" and order =="Ac":
-            print("sortedlast name")
             if Search == "" :
                 info = info.order_by(Member.l_name).all()
             else:
                 info = info.filter(Member.l_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
         elif drop == "l_name" and order =="Dc":
             if Search == "":
                 print("search feild was empty")
                 info = info.order_by(desc(Member.l_name)).all()
             else:
                 info = info.filter(Member.l_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
         elif drop == "l_name":
             print("last name",drop)
-            info = info.filter(Member.l_name.like('%'+ Search +'%'))
-            info = info.all()
+            info = info.filter(Member.l_name.like('%'+ Search +'%')).all()
+        if info == []:
+                flash(message,'danger')    
 
-    
+        #Middle Name
+        message = "There are no members currently with the Middle Name "+ Search + "."
         if drop == "m_name" and order =="Ac":
-            print("sortedmiddle name")
             if Search == "":
                 print("search feild was empty")
                 info = info.order_by(Member.m_name).all()
             else:
                 info = info.filter(Member.m_name.like('%'+ Search +'%')).all()
-        
+            if info == []:
+                flash(message,'danger')
         elif drop == "m_name" and order =="Dc":
             if Search == "":
                 print("search feild was empty")
                 info = info.order_by(desc(Member.m_name)).all()
             else:
                 info = info.filter(Member.m_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
         elif drop == "m_name":
             print("middle name",drop)
             info = info.filter(Member.m_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
         
+        #Genders Male
+        message = "There are no members currently of the gender"+ drop + "."
         if drop == "Male":
-            print("male",drop)
             info = info.filter_by(gender=drop).all()
-        
+            if info == []:
+                flash(message,'danger')
+        #genders Female
+        message = "There are no members currently of the gender "+ drop + "."
         if drop == "Female":
-            print("female",drop)
             info = info.filter_by(gender=drop).all()
-        
+            if info == []:
+                flash(message,'danger')
+        #Age
+        message = "There are no members currently of the age "+ Search + "."
         if drop == "Age":
-            print("age",drop, Search)
             if Search == "":
                 info = info.order_by(Member.age).all()
             else:
                 info = info.filter_by(age = Search).all()
-                
+            if info == []:
+                flash(message,'danger')    
                 
             
         return render_template('Searchmember.html',form=myform , Search = Search,drop = drop, member = info, order= order )
-      
-###
-# The functions below should be applicable to all Flask apps.
-### 
-def showinfo(place):
-    myform = searchForm()  
-    if get_member_info() != []:
-        
-        lenght =length_hint(get_member_info())
-        render_template(place, form = myform, member = get_member_info() ,rootdiri = "rootdir",len = lenght)
-    else: 
-        flash("database is empty no members to show", 'danger')
-        return redirect(place)
 
 
-@app.route('/members/<int:id>',methods=["POST", "GET"])
+@app.route('/update/members/<int:id>',methods=["POST", "GET"])
 @login_required
 def updatemember(id):
     form = Addmember()
@@ -219,6 +229,25 @@ def updatemember(id):
     else:
         return render_template('Updatemember.html', form = form, info = info)
     
+@app.route('/remove/member/<int:id>')
+@login_required
+def deletemember(id):
+    pass
+
+
+###
+# The functions below should be applicable to all Flask apps.
+### 
+def showinfo(place):
+    myform = searchForm()  
+    if get_member_info() != []:
+        
+        lenght =length_hint(get_member_info())
+        render_template(place, form = myform, member = get_member_info() ,rootdiri = "rootdir",len = lenght)
+    else: 
+        flash("database is empty no members to show", 'danger')
+        return redirect(place)
+
 
 def get_member_info():
     prop_info = Member.query.all()
