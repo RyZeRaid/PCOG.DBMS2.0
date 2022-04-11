@@ -34,6 +34,11 @@ SECRET_KEY= ak%jh%asd9#!ad8@*^asd%fa$
 DATABASE_URL=postgresql://pcog:Password123@localhost/pcog
 UPLOAD_FOLDER= 'app/static/uploads'
 
+# When adding a table to a database make sure to create a from in the form.py file with te table feilds and the data types needed for each feild.
+# Such as the loginForm relating to the (class UserProfile(db.Model): Table in the database) 
+
+
+
 # for migrations folder to be made initiate your virtual env and run the following commands.
 $ pip install flask 
 $ pip install Flask-Migrate
