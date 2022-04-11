@@ -14,7 +14,7 @@ class Member(db.Model):
     age = db.Column(db.String(6),nullable=False)
     gender = db.Column(db.String(20),nullable=False)
     phonenum = db.Column(db.String(80),nullable=False)
-    dob = db.Column(db.String(20),nullable=False)
+    dob = db.Column(db.DateTime,nullable=False)
     email = db.Column(db.String(120),nullable=False)
     pri = db.Column(db.Integer,nullable=False)
     address = db.Column(db.String(800),nullable=False)
@@ -33,6 +33,7 @@ class Member(db.Model):
         self.email = email
         self.pri = pri
         self.address = address
+
 
 class UserProfile(db.Model):
    

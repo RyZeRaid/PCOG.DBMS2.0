@@ -1,6 +1,7 @@
+from xmlrpc.client import DateTime
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField,IntegerField, SelectField, SubmitField, TextAreaField, PasswordField, BooleanField, RadioField
+from wtforms import StringField,IntegerField, SelectField, SubmitField, TextAreaField, PasswordField, BooleanField, RadioField, DateField
 from wtforms.validators import InputRequired, DataRequired, Length
 
 class Addmember(FlaskForm):
@@ -9,7 +10,7 @@ class Addmember(FlaskForm):
     f_name = StringField('First Name', validators=[InputRequired()])
     l_name = StringField('Last Name', validators=[InputRequired()])
     m_name = StringField('Middle Name', validators=[InputRequired()])
-    dob = StringField('Date of Birth', validators=[InputRequired()])
+    dob = DateField('Date of Birth', validators=[InputRequired()])
     gender = SelectField('Gender', choices = [('general','general'),('Male', 'Male'),('Female','Female')], validators=[InputRequired()])
     address = StringField('Address',  validators=[DataRequired(),InputRequired(),Length(max=700)])
     phonenum = StringField('Phone Number', validators=[InputRequired()])
@@ -32,7 +33,7 @@ class UpdateForm(FlaskForm):
     f_name = StringField('First Name', validators=[InputRequired()])
     l_name = StringField('Last Name', validators=[InputRequired()])
     m_name = StringField('Middle Name', validators=[InputRequired()])
-    dob = StringField('Date of Birth', validators=[InputRequired()])
+    dob = DateField('Date of Birth', validators=[InputRequired()])
     gender = SelectField('Gender', choices = [('general','general'),('Male', 'Male'),('Female','Female')], validators=[InputRequired()])
     address = StringField('Address',  validators=[DataRequired(),InputRequired(),Length(max=700)])
     phonenum = StringField('Phone Number', validators=[InputRequired()])
