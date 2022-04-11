@@ -27,7 +27,7 @@ $ pip install flask_wtf
 # migrate = Migrate(app, db)
 # to initiate the databse
 # then to create the migrations file run the following commands
-$ falsk db init
+$ flask db init
 $ flask db migrate 
 $ flask db upgrade 
 # any other changes made to the database after makeing the changes re use the commands above.
