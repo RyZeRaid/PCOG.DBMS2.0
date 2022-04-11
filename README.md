@@ -20,7 +20,7 @@ $ py run.py
 ```bash
 
 
-# make the database in postgress sql shell
+# make the database in postgress sql shell open the psql shell
 $ create user "pcog";
 $ create database "pcog";
 $ #\password pcog  #Password123
