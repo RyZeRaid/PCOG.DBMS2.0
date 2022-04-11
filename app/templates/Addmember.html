@@ -2,7 +2,7 @@
 
 {% block main %}
 <h1 class="page-header" id="pgheader">Add Member</h1>
-
+{% include 'flash_messages.html' %}
 <div class="card text-left" style="width: 48rem; " id = "card">
 <div class="card-body">
 <form  action="{{ url_for('addmember') }}" method="POST" >
@@ -69,11 +69,13 @@
       </div>
 
       <div class="col-auto">
-        <div class = "form-select">
-        <h6>{{ form.gender.label }}</h6>
-          {{ form.gender }}
-        </div>
-      </div>  
+        
+        <select name = "gender" class="btn btn-primary dropdown-toggle" aria-label=".form-select-lg">
+          <option value = "general">Gender</option>
+          <option class="dropdown-item" value ="Male" >Male</option>
+          <option class="dropdown-item" value ="Female" >Female</option>
+        </select>
+        </div>  
   </div>
   
   <div class="row mb-3">
@@ -87,6 +89,7 @@
   
   <div class="col-12">
     <button type="submit" name="submit" class="btn btn-primary">Add Member</button>
+    <button type="reset" name="reset" class="btn btn-warning">Undo all</button>
   </div>
   
 </form>
