@@ -109,10 +109,11 @@
                       </div>
                 
                       <div class="col-auto">
-                        <div class = "form-select">
-                        <h6>{{ form.gender.label }}</h6>
-                          {{ form.gender }}
-                        </div>
+                        <select name = "gender" class="btn btn-primary dropdown-toggle" aria-label=".form-select-lg">
+                          <option value = "general">Gender</option>
+                          <option class="dropdown-item" value ="Male" >Male</option>
+                          <option class="dropdown-item" value ="Female" >Female</option>
+                        </select>
                       </div>  
                   </div>
                   

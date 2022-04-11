@@ -36,8 +36,9 @@ def about():
 @login_required
 def addmember():
     myform = Addmember()
-
+    print("came here ")
     if request.method == 'GET':
+        
         return render_template('Addmember.html',form=myform )
     
     if request.method == 'POST'and myform.validate_on_submit():
@@ -53,7 +54,7 @@ def addmember():
         email = myform.email.data
         address = myform.address.data
         pri = 0
-       
+        
         member = Member(position = position, l_name = l_name, f_name = f_name,
                         m_name = m_name, age = age, gender = gender,
                         phonenum = phonenum , dob = dob, email = email,
@@ -61,9 +62,9 @@ def addmember():
         
         db.session.add(member)
         db.session.commit()
-
-        flash('Successfully added a new property','success')
-        return redirect(url_for('home'))
+        
+        flash('Successfully added a new member to the database','success')
+        return redirect(url_for('addmember'))
 
     flash_errors(myform)
     return render_template('Addmember.html', form = myform)
