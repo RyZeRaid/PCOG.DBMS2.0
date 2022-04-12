@@ -10,13 +10,8 @@ from sre_constants import SUCCESS
 from app import app, db,login_manager
 from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
-<<<<<<< HEAD
-from .models import Member,UserProfile, AttendeeList
 from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm, Deleteattendance
-=======
 from .models import Member,UserProfile, AttendeeList, ArchiveList
-from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm
->>>>>>> cd526a21766ca4929122896cf08e546c1771b4fa
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
@@ -34,7 +29,6 @@ def home():
     """Render website's home page."""
     return render_template('home.html')
 
-<<<<<<< HEAD
 @app.route('/remove/override/checkattendance/member/<int:id>',methods = ["POST","GET"])
 @login_required
 def removeattendance(id):
@@ -54,12 +48,8 @@ def removeattendance(id):
             db.session.delete(info)
             db.session.commit()
 
-            #used for getting the members id form the attendee list tabel
-            ch = AttendeeList.query.order_by( AttendeeList.member_id ).all()
-            check = [x.member_id for x in ch]
-            
             flash("Removed member from Attendee List Successfully :) ",'success')
-            return render_template('Addnewattendeeview.html',form = searchForm(), member = get_member_info(), check = check  )
+            return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
         except:
             flash("Error there was a problem deleting member Please try again", 'danger')
             return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
@@ -231,32 +221,37 @@ def addnewattendancesearch():
         return render_template('Addnewattendeesearch.html',form=myform , Search = Search,drop = drop, member = info, order= order,check = check )
 
 
-
+@app.route("/Addnewattendee/Member/<int:id>")
 @login_required
 def addnewattendance(id):
-    l = len(get_member_info()) - len(get_attendee_info())
-    print(l,id)
+    member_info = Member.query.get_or_404(id)
     
-    return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
-=======
+    try:
+        archive = AttendeeList(member_id = member_info.id, f_name = member_info.f_name, l_name = member_info.l_name, phonenum = member_info.phonenum, email = member_info.email)
+        db.session.add(archive)
+        db.session.commit()
+        flash("Added a new Attendee to the Attendee list Successfully :) ",'success')
+        return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
+    except:
+        flash("Error there was a problem Adding a new Attendee to the Attendee List Please try again", 'danger')
+        return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
+    
+
 @app.route('/archive')
 @login_required
 def archive():
     return render_template('Archive.html', attendee = get_archive_info())
->>>>>>> cd526a21766ca4929122896cf08e546c1771b4fa
 
 @app.route('/checkattendance')
 @login_required
 def checkattendance():
     form = CheckForm()
-
     return render_template('CheckAttendace.html', form = form, attendee = get_attendee_info())
 
 @app.route('/checkattendance/checked', methods=["POST", "GET"])
 @login_required
 def checkedattendance():
     form = CheckForm()
-
     AttendeeList.query.delete()
     db.session.commit()
 

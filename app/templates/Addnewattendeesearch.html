@@ -87,8 +87,8 @@
         <td>{{ info.date_added }}</td>
         <td>
           <table class="table-primary">
-            <td> <a href="{{ url_for('updatemember',id=info.id) }}" class="btn btn-primary" role="button">Edit Member</a> </td>
-            <td> <a href="{{ url_for('deletemember',id=info.id) }}" class="btn btn-danger" role="button">Remove Member</a> </td>
+            <td><input type="submit" name="submit_button" value="Do Something Else">
+                 <a href="{{ url_for('addnewattendance',id=info.id) }}" class="btn btn-primary" role="button">Add new Attendee</a> </td>
           </table>
         </td>
       </tr>
