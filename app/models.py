@@ -52,6 +52,25 @@ class AttendeeList(db.Model):
         self.phonenum = phonenum 
         self.email = email
 
+class ArchiveList(db.Model):
+
+    __tablename__ = 'archive_list'
+
+    id = db.Column(db.Integer, primary_key=True)
+    member_id = db.Column(db.Integer,nullable=False)
+    f_name = db.Column(db.String(100),nullable=False)
+    l_name = db.Column(db.String(100),nullable=False)
+    email = db.Column(db.String(120),nullable=False)
+    phonenum = db.Column(db.String(80),nullable=False)
+    date_attended = db.Column(db.DateTime, default = datetime.utcnow)
+
+    def __init__(self, member_id,f_name,l_name,phonenum,email):
+        self.member_id = member_id
+        self.l_name = l_name
+        self.f_name = f_name
+        self.phonenum = phonenum 
+        self.email = email
+
 class UserProfile(db.Model):
    
     __tablename__ = 'user_profiles'

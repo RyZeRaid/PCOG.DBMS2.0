@@ -10,7 +10,7 @@ from sre_constants import SUCCESS
 from app import app, db,login_manager
 from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
-from .models import Member,UserProfile, AttendeeList
+from .models import Member,UserProfile, AttendeeList, ArchiveList
 from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
@@ -28,6 +28,11 @@ from sqlalchemy.orm.session import make_transient
 def home():
     """Render website's home page."""
     return render_template('home.html')
+
+@app.route('/archive')
+@login_required
+def archive():
+    return render_template('Archive.html', attendee = get_archive_info())
 
 @app.route('/checkattendance')
 @login_required
@@ -61,6 +66,13 @@ def checkedattendance():
             # adding the object again generates a new identiy / object-id
             db.session.add(info)
             # this include a flush() and create a new primary key
+            db.session.commit()
+
+            archived_info = Member.query.get_or_404(int(id))
+
+            archive = ArchiveList(member_id = archived_info.id, f_name = archived_info.f_name, l_name = archived_info.l_name, phonenum = archived_info.phonenum, email = archived_info.email)
+
+            db.session.add(archive)
             db.session.commit()
 
 
@@ -381,6 +393,10 @@ def get_member_info():
 
 def get_attendee_info():
     prop_info = AttendeeList.query.all()
+    return prop_info
+
+def get_archive_info():
+    prop_info = ArchiveList.query.all()
     return prop_info
 
 
