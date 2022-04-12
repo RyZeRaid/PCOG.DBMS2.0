@@ -19,7 +19,7 @@ from datetime import date, datetime
 from sqlalchemy.orm.session import make_transient
 
 ###
-# Routing for your application.
+# Routings for application.
 ###
 
 #add walk-ins
@@ -109,7 +109,7 @@ def listgenerated():
                 flash("Not enough members in database", "danger")
 
             if count == 0:
-                flash("Nice", "success")
+                flash("Successfully gennerated Attendance list", "success")
         else:
             flash("List already generated for this week", "danger")
         

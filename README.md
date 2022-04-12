@@ -55,6 +55,10 @@ $ flask db migrate
 $ flask db upgrade 
 # any other changes made to the database after makeing the changes re use the commands above.
 
+
+#if when pulled Error: Can't locate revision identified by '7ad42f6f8999' run the following command in terminal to resolve issue add the virsion in question in the error givenat he end of the command.
+$ flask db revision --rev-id 7ad42f6f8999
+
 ```
 ```bash
 
