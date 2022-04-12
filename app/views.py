@@ -15,7 +15,7 @@ from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, Gene
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
-from datetime import date
+from datetime import date, datetime
 
 ###
 # Routing for your application.
@@ -89,7 +89,7 @@ def listgenerated():
 @login_required
 def addmember():
     myform = Addmember()
-    print("came here ")
+    
     if request.method == 'GET':
         
         return render_template('Addmember.html',form=myform )
@@ -107,17 +107,21 @@ def addmember():
         email = myform.email.data
         address = myform.address.data
         pri = 0
-        
-        member = Member(position = position, l_name = l_name, f_name = f_name,
-                        m_name = m_name, age = age, gender = gender,
-                        phonenum = phonenum , dob = dob, email = email,
-                        address = address, pri = pri) 
-        
-        db.session.add(member)
-        db.session.commit()
-        
-        flash('Successfully added a new member to the database','success')
-        return redirect(url_for('addmember'))
+
+        if calculate_age(dob) != age:
+            flash('The member was not added!! (The date of birth does not correspond with the age given)', 'danger')
+            return redirect(url_for('addmember'))
+        else:    
+            member = Member(position = position, l_name = l_name, f_name = f_name,
+                            m_name = m_name, age = age, gender = gender,
+                            phonenum = phonenum , dob = dob, email = email,
+                            address = address, pri = pri) 
+            
+            db.session.add(member)
+            db.session.commit()
+            
+            flash('Successfully added a new member to the database','success')
+            return redirect(url_for('addmember'))
 
     flash_errors(myform)
     return render_template('Addmember.html', form = myform)
@@ -298,13 +302,19 @@ def updatemember(id):
         info.email = request.form['email']
         info.address = request.form['address']
         info.date_added = date.today()
-        try:
-            db.session.commit()
-            flash("Updated member Successfully testibng :) ",'success')
-            return render_template('Viewmember.html', form = searchForm(), member = get_member_info())
-        except:
-            flash("Error didnt update member", 'danger')
+        
+        if calculate_age(datetime.strptime(info.dob,'%Y-%m-%d')) != int(info.age):
+            flash('The member was not updated!!! (The date of birth does not correspond with the age given)', 'danger')
             return render_template('Updatemember.html', form = form, info = info)
+        else: 
+            if calculate_age(datetime.strptime(info.dob,'%Y-%m-%d'))== int(info.age):
+                try:
+                    db.session.commit()
+                    flash("Updated member Successfully testibng :) ",'success')
+                    return render_template('Viewmember.html', form = searchForm(), member = get_member_info())
+                except:
+                    flash("Error didnt update member", 'danger')
+                    return render_template('Updatemember.html', form = form, info = info)
     else:
         return render_template('Updatemember.html', form = form, info = info)
     
@@ -411,6 +421,10 @@ def logout():
 @login_manager.user_loader
 def load_user(id):
     return UserProfile.query.get(int(id))
+
+def calculate_age(born):
+    today = date.today()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 # Display Flask WTF errors as Flash messages
 def flash_errors(form):
