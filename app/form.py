@@ -44,3 +44,10 @@ class UpdateForm(FlaskForm):
 class DeleteForm(FlaskForm):
     submit = SubmitField('Submit')
     Cancel = SubmitField('Cancel')
+
+class GenerateListForm(FlaskForm):
+    NumberOfMembers = IntegerField('Attendee Amount')
+    submit = SubmitField('Submit')
+
+class CheckForm(FlaskForm):
+    submit = SubmitField('Submit')

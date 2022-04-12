@@ -10,8 +10,8 @@ from sre_constants import SUCCESS
 from app import app, db,login_manager
 from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
-from .models import Member,UserProfile
-from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm
+from .models import Member,UserProfile, AttendeeList
+from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
@@ -21,16 +21,69 @@ from datetime import date
 # Routing for your application.
 ###
 
+#add walk-ins
+
 @app.route('/')
 def home():
     """Render website's home page."""
     return render_template('home.html')
 
+@app.route('/checkattendance')
+@login_required
+def checkattendance():
+    form = CheckForm()
 
-@app.route('/about/')
-def about():
-    """Render the website's about page."""
-    return render_template('about.html', name=" ___")
+    return render_template('CheckAttendace.html', form = form, attendee = get_attendee_info())
+
+@app.route('/checkattendance/checked', methods=["POST", "GET"])
+@login_required
+def checkedattendance():
+    form = CheckForm()
+
+    AttendeeList.query.delete()
+    db.session.commit()
+
+    if request.method == "POST":
+        print(request.form.getlist('attended'))
+        return render_template('CheckAttendace.html', form = form, attendee = get_attendee_info())
+
+@app.route('/generateattendee')
+@login_required
+def generateattendee():
+    form = GenerateListForm()
+
+    return render_template('AttendeeList.html', form = form, attendee = get_attendee_info())
+
+@app.route('/generateattendee/list', methods=["POST", "GET"])
+@login_required
+def listgenerated():
+    form = GenerateListForm()
+
+    count = 0
+
+    if request.method == "POST" and form.validate_on_submit():
+        NumberOfAttendees = form.NumberOfMembers.data
+
+        #AttendeeList.query.delete() put this in the check list part
+
+        l = get_member_info()
+        if get_attendee_info() == []:
+            if len(l) >= NumberOfAttendees:
+                for x in range(NumberOfAttendees):
+                    attendee = AttendeeList(member_id = l[x].id, f_name = l[x].f_name, l_name = l[x].l_name, phonenum = l[x].phonenum, email = l[x].email)
+                    db.session.add(attendee)
+                    db.session.commit()
+            else:
+                count += 1
+                flash("Not enough members in database", "danger")
+
+            if count == 0:
+                flash("Nice", "success")
+        else:
+            flash("List already generated for this week", "danger")
+        
+        
+        return render_template('AttendeeList.html', form = form, attendee = get_attendee_info())
 
 @app.route("/Member/Addmember",methods=["POST", "GET"])
 @login_required
@@ -293,6 +346,10 @@ def showinfo(place):
 
 def get_member_info():
     prop_info = Member.query.all()
+    return prop_info
+
+def get_attendee_info():
+    prop_info = AttendeeList.query.all()
     return prop_info
 
 
