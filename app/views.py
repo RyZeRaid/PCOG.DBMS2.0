@@ -16,6 +16,7 @@ from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from datetime import date, datetime
+from sqlalchemy.orm.session import make_transient
 
 ###
 # Routing for your application.
@@ -44,7 +45,25 @@ def checkedattendance():
     db.session.commit()
 
     if request.method == "POST":
-        print(request.form.getlist('attended'))
+
+        attended_id = request.form.getlist('attended')
+
+        for id in attended_id:
+            info = Member.query.get_or_404(int(id))
+
+            db.session.delete(info)
+            db.session.commit()
+
+            # make it transient
+            make_transient(info)
+            # remove the identiy / object-id
+            info._oid = None
+            # adding the object again generates a new identiy / object-id
+            db.session.add(info)
+            # this include a flush() and create a new primary key
+            db.session.commit()
+
+
         return render_template('CheckAttendace.html', form = form, attendee = get_attendee_info())
 
 @app.route('/generateattendee')
@@ -108,7 +127,9 @@ def addmember():
         address = myform.address.data
         pri = 0
 
-        if calculate_age(dob) != age:
+        
+
+        if calculate_age(dob) != int(age):
             flash('The member was not added!! (The date of birth does not correspond with the age given)', 'danger')
             return redirect(url_for('addmember'))
         else:    
