@@ -1,8 +1,8 @@
 from xmlrpc.client import DateTime
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField,IntegerField, SelectField, SubmitField, TextAreaField, PasswordField, BooleanField, RadioField, DateField
-from wtforms.validators import InputRequired, DataRequired, Length
+from wtforms import StringField,IntegerField, SelectField, SubmitField,TextAreaField, PasswordField, BooleanField, RadioField, DateField
+from wtforms.validators import InputRequired, DataRequired, Length,Email
 
 class Addmember(FlaskForm):
     position = StringField('Position', validators=[InputRequired()])
@@ -14,7 +14,7 @@ class Addmember(FlaskForm):
     gender = SelectField('Gender', choices = [('general','general'),('Male', 'Male'),('Female','Female')], validators=[DataRequired()])
     address = StringField('Address',  validators=[DataRequired(),InputRequired(),Length(max=700)])
     phonenum = StringField('Phone Number', validators=[InputRequired()])
-    email = StringField('Email Address', validators=[InputRequired()])
+    email = StringField('Email Address', validators=[InputRequired(),Email('Please enter a valid email adress')])
     
 class searchForm(FlaskForm):
     Search = StringField('Search')
@@ -37,7 +37,7 @@ class UpdateForm(FlaskForm):
     gender = SelectField('Gender', choices = [('general','general'),('Male', 'Male'),('Female','Female')], validators=[DataRequired()])
     address = StringField('Address',  validators=[DataRequired(),InputRequired(),Length(max=700)])
     phonenum = StringField('Phone Number', validators=[InputRequired()])
-    email = StringField('Email Address', validators=[InputRequired()])
+    email = StringField('Email Address', validators=[InputRequired(),Email('Please enter a valid email adress')])
     submit = SubmitField('Submit')
     Cancel = SubmitField('Cancel')
 
