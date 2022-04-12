@@ -17,6 +17,7 @@
 <button type="submit" name="submit" class="btn btn-primary">Generate List</button>
 </form>
 <br>
+{% if attendee != [] %}
 <div class="container_view">
 
     <table class="table table-striped">
@@ -27,6 +28,7 @@
           <th scope="col">Last Name</th>
           <th scope="col">Email Address</th>
           <th scope="col">Phone Number</th>
+          <th scope="col">TO DO</th>
         </tr>
       </thead>
       <tbody>
@@ -37,10 +39,13 @@
           <td>{{ info.l_name }}</td>
           <td>{{ info.email }}</td>
           <td>{{ info.phonenum }}</td>
+          <td><a href="{{ url_for('removeattendance',id=info.id) }}" class="btn btn-danger" role="button">Remove Member</a></td>
         </tr>
       
     {% endfor %}  
     </tbody>
   </table>
-
+  
+    <a href="{{ url_for('addnewattendanceview') }}" class="btn btn-primary" role="button">Add a new Attendee</a>
+  {% endif %}
 {% endblock %}

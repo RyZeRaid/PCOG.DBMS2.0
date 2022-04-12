@@ -51,3 +51,9 @@ class GenerateListForm(FlaskForm):
 
 class CheckForm(FlaskForm):
     submit = SubmitField('Submit')
+
+class Deleteattendance(FlaskForm):
+    submit = SubmitField('Submit')
+    Cancel = SubmitField('Cancel')
+
+

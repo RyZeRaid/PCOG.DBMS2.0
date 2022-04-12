@@ -11,7 +11,7 @@ from app import app, db,login_manager
 from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
 from .models import Member,UserProfile, AttendeeList
-from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm
+from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm, Deleteattendance
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
@@ -28,6 +28,210 @@ from sqlalchemy.orm.session import make_transient
 def home():
     """Render website's home page."""
     return render_template('home.html')
+
+@app.route('/remove/override/checkattendance/member/<int:id>',methods = ["POST","GET"])
+@login_required
+def removeattendance(id):
+    form = Deleteattendance()
+    info = AttendeeList.query.get_or_404(id)
+
+
+    #check if user wanted to cancel the deletion of the member and redirect them to the view page
+    if form.Cancel.data:
+        flash('Did not delete member', 'success')
+        return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
+
+    #if the user agreed to delete the member from the database
+    if request.method == "POST" and form.validate_on_submit(): 
+        try:
+            #removes the data from table
+            db.session.delete(info)
+            db.session.commit()
+
+            #used for getting the members id form the attendee list tabel
+            ch = AttendeeList.query.order_by( AttendeeList.member_id ).all()
+            check = [x.member_id for x in ch]
+            
+            flash("Removed member from Attendee List Successfully :) ",'success')
+            return render_template('Addnewattendeeview.html',form = searchForm(), member = get_member_info(), check = check  )
+        except:
+            flash("Error there was a problem deleting member Please try again", 'danger')
+            return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
+    else:
+        return render_template('Deleteattendance.html', form = form, info = info)
+
+
+@app.route('/addnew/view/override/checkattendance')
+@login_required
+def addnewattendanceview():
+    #used for getting the members id form the attendee list tabel
+    ch = AttendeeList.query.order_by( AttendeeList.member_id ).all()
+    check = [x.member_id for x in ch]
+
+    myform = searchForm()  
+    
+    if get_member_info() != []:
+        return render_template('Addnewattendeeview.html', form = myform, member = get_member_info(), check = check )
+    else: 
+        flash("database is empty no members to show", 'danger')
+        return render_template('Addnewattendeeview.html', form = myform, member = get_member_info() , check = check )
+
+
+@app.route('/addnew/view/search/override/checkattendance',methods = ["POST","GET"])
+@login_required
+def addnewattendancesearch():
+
+    myform = searchForm()
+    
+    info = Member.query
+
+    ch = AttendeeList.query.order_by( AttendeeList.member_id ).all()
+    check = [x.member_id for x in ch] 
+
+    if request.method == 'GET':
+        
+        return render_template('Viewmember.html',form=myform )
+    
+    if request.method == 'POST'and myform.validate_on_submit():
+        #Getting data from the search form
+        Search = myform.Search.data
+        drop = myform.drop.data
+        order = myform.order.data
+        print("this is drop ",drop)
+        if drop == "general" :
+            flash("Please select what you would like to search by", 'danger')
+            info =  info.order_by(Member.f_name ).all()
+        
+        print("this is what was searched",Search,drop, order)
+        #Query the database by what to search by 
+        
+        #First Name
+        message= "There are no members currently with the first name "+ Search + "."
+        if drop == "f_name" and order == "Ac":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(Member.f_name).all()
+            else:
+                info = info.filter(Member.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "f_name" and order =="Dc":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(desc(Member.f_name)).all()
+            else:
+                info = info.filter(Member.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "f_name":
+            print("first name",drop)
+            info = info.filter(Member.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        
+        # Last name
+        message = "There are no members currently with the Last Name "+ Search + "."
+        if drop =="l_name" and order =="Ac":
+            if Search == "" :
+                info = info.order_by(Member.l_name).all()
+            else:
+                info = info.filter(Member.l_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "l_name" and order =="Dc":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(desc(Member.l_name)).all()
+            else:
+                info = info.filter(Member.l_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "l_name":
+            print("last name",drop)
+            info = info.filter(Member.l_name.like('%'+ Search +'%')).all()
+        if info == []:
+                flash(message,'danger')    
+
+        #Middle Name
+        message = "There are no members currently with the Middle Name "+ Search + "."
+        if drop == "m_name" and order =="Ac":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(Member.m_name).all()
+            else:
+                info = info.filter(Member.m_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "m_name" and order =="Dc":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(desc(Member.m_name)).all()
+            else:
+                info = info.filter(Member.m_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "m_name":
+            print("middle name",drop)
+            info = info.filter(Member.m_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        
+        #Genders Male
+        message = "There are no members currently of the gender"+ drop + "."
+        if drop == "Male":
+            info = info.filter_by(gender=drop).all()
+            if info == []:
+                flash(message,'danger')
+        #genders Female
+        message = "There are no members currently of the gender "+ drop + "."
+        if drop == "Female":
+            info = info.filter_by(gender=drop).all()
+            if info == []:
+                flash(message,'danger')
+        #Age
+        message = "There are no members currently of the age "+ Search + "."
+        if drop == "Age":
+            if Search == "":
+                info = info.order_by(Member.age).all()
+            else:
+                info = info.filter_by(age = Search).all()
+            if info == []:
+                flash(message,'danger')    
+        # ID Number
+        message = "There are no members currently with the ID Number "+ Search + "."
+        if drop == "Id" and order =="Ac":
+            if Search == "":
+                info = info.order_by(Member.id).all()
+            else:
+                info = info.filter_by( id = Search ).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "Id" and order =="Dc":
+            if Search == "":
+               
+                info = info.order_by(desc(Member.id)).all()
+            else:
+                info = info.filter_by( id = Search ).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "Id":
+            if Search == "":
+                info = info.order_by(Member.id).all()
+            else:
+                info = info.filter_by( id = Search ).all()
+                if info == []:
+                    flash(message,'danger')       
+            
+        return render_template('Addnewattendeesearch.html',form=myform , Search = Search,drop = drop, member = info, order= order,check = check )
+
+
+
+@login_required
+def addnewattendance(id):
+    l = len(get_member_info()) - len(get_attendee_info())
+    print(l,id)
+    
+    return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
 
 @app.route('/checkattendance')
 @login_required
@@ -78,8 +282,6 @@ def generateattendee():
 def listgenerated():
     form = GenerateListForm()
 
-    count = 0
-
     if request.method == "POST" and form.validate_on_submit():
         NumberOfAttendees = form.NumberOfMembers.data
 
@@ -89,15 +291,15 @@ def listgenerated():
         if get_attendee_info() == []:
             if len(l) >= NumberOfAttendees:
                 for x in range(NumberOfAttendees):
+                    #information to add to the attendee list 
                     attendee = AttendeeList(member_id = l[x].id, f_name = l[x].f_name, l_name = l[x].l_name, phonenum = l[x].phonenum, email = l[x].email)
+                   
+                    #adding the information for one attendee at a time to the database
                     db.session.add(attendee)
                     db.session.commit()
-            else:
-                count += 1
-                flash("Not enough members in database", "danger")
-
-            if count == 0:
                 flash("Successfully gennerated Attendance list", "success")
+            else:
+                flash("There are not enough members in the database (There are currently "+str(len(l))+" members in the database).", "danger")
         else:
             flash("List already generated for this week", "danger")
         
@@ -147,7 +349,7 @@ def addmember():
     flash_errors(myform)
     return render_template('Addmember.html', form = myform)
 
-
+# general view members 
 @app.route('/view/members')
 @login_required
 def showmember():
@@ -158,7 +360,7 @@ def showmember():
         flash("database is empty no members to show", 'danger')
         return render_template('Viewmember.html', form = myform, member = get_member_info() )
 
-
+#searching and sort 
 @app.route('/search/members',methods=["POST", "GET"])
 @login_required
 def searchmember():
@@ -292,10 +494,12 @@ def searchmember():
             if info == []:
                 flash(message,'danger')
         elif drop == "Id":
-            
-            info = info.filter_by( id = Search ).all()
-            if info == []:
-                flash(message,'danger')       
+            if Search == "":
+                info = info.order_by(Member.id).all()
+            else:
+                info = info.filter_by( id = Search ).all()
+                if info == []:
+                    flash(message,'danger')       
             
         return render_template('Searchmember.html',form=myform , Search = Search,drop = drop, member = info, order= order )
 
@@ -347,7 +551,7 @@ def deletemember(id):
     
     #check if user wanted to cancel the deletion of the member and redirect them to the view page
     if form.Cancel.data:
-        flash('Did not delete member.', 'success')
+        flash('Did not delete member. ', 'success')
         return render_template('Viewmember.html', form = searchForm() , member = get_member_info())
 
     #if the user agreed to delete the member from the database
