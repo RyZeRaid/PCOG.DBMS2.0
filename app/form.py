@@ -56,4 +56,9 @@ class Deleteattendance(FlaskForm):
     submit = SubmitField('Submit')
     Cancel = SubmitField('Cancel')
 
+class searchArchiveForm(FlaskForm):
+    Search = StringField('Search')
+    Searchdate = DateField('Only select for date Search')
+    drop = SelectField('SearchBy', choices = [('f_name','f_name'),('l_name','l_name'),('general','general'),('Id','Id'), ('date','date')], validators=[InputRequired()])
+    order = RadioField('Order', choices=[('Ac','Ac'),('Dc','Dc'),('None','None')])
 

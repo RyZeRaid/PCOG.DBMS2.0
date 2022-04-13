@@ -10,9 +10,9 @@ from sre_constants import SUCCESS
 from app import app, db,login_manager
 from flask import render_template, request, redirect, url_for,flash,send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required
-from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm, Deleteattendance
+from .form import Addmember, searchForm, LoginForm, DeleteForm, UpdateForm, GenerateListForm, CheckForm, Deleteattendance, searchArchiveForm
 from .models import Member,UserProfile, AttendeeList, ArchiveList
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from datetime import date, datetime
@@ -86,7 +86,7 @@ def addnewattendancesearch():
 
     if request.method == 'GET':
         
-        return render_template('Viewmember.html',form=myform )
+        return render_template('Addnewattendeeview.html', form = myform, member = get_member_info() , check = check )
     
     if request.method == 'POST'and myform.validate_on_submit():
         #Getting data from the search form
@@ -237,10 +237,132 @@ def addnewattendance(id):
         return render_template('AttendeeList.html', form = GenerateListForm(), attendee = get_attendee_info())
     
 
-@app.route('/archive')
+@app.route('/archive', methods = ["POST","GET"])
 @login_required
 def archive():
-    return render_template('Archive.html', attendee = get_archive_info())
+    
+    myform = searchArchiveForm()
+    
+    info = ArchiveList.query
+
+    if request.method == 'GET':
+        
+        return render_template('Archive.html',form = myform, attendee = get_archive_info())
+    
+    print("started")
+    if request.method == 'POST'and myform.validate_on_submit():
+        #Getting data from the search form
+        Search = myform.Search.data
+        Searchdate = myform.Searchdate.data
+        drop = myform.drop.data
+        order = myform.order.data
+        #print((Searchdate))
+        #print("this !!!!!!!!!!!! 123",info.filter(func.date(ArchiveList.date_attended) == Searchdate).all())
+        print("this is drop ",drop, Search)
+        if drop == "general" :
+            flash("Please select what you would like to search by", 'danger')
+            info =  info.order_by(ArchiveList.date_attended ).all()
+        
+        print("this is what was searched",Search,drop, order)
+        #Query the database by what to search by 
+        
+        #First Name
+        message= "There are no members currently with the first name "+ Search + "."
+        if drop == "f_name" and order == "Ac":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(ArchiveList.f_name).all()
+            else:
+                info = info.filter(ArchiveList.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "f_name" and order =="Dc":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(desc(ArchiveList.f_name)).all()
+            else:
+                info = info.filter(ArchiveList.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "f_name":
+            print("first name",drop)
+            info = info.filter(ArchiveList.f_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        
+        # Last name
+        message = "There are no members currently with the Last Name "+ Search + "."
+        if drop =="l_name" and order =="Ac":
+            if Search == "" :
+                info = info.order_by(ArchiveList.l_name).all()
+            else:
+                info = info.filter(ArchiveList.l_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "l_name" and order =="Dc":
+            if Search == "":
+                print("search feild was empty")
+                info = info.order_by(desc(ArchiveList.l_name)).all()
+            else:
+                info = info.filter(ArchiveList.l_name.like('%'+ Search +'%')).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "l_name":
+            print("last name",drop)
+            info = info.filter(ArchiveList.l_name.like('%'+ Search +'%')).all()
+        if info == []:
+                flash(message,'danger')    
+
+        #Date 
+        message = "There are no entries with the date "+ str(Searchdate) + "."
+        if drop == "date" and order =="Ac":
+            if Searchdate == "" and Search == "":
+                info = info.filter(func.date(ArchiveList.date_attended) == Searchdate).all()
+            else:
+                info = info.filter(func.date(ArchiveList.date_attended) == Searchdate).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "date" and order =="Dc":
+            if Searchdate == "" and Search == "":
+               
+                info =info.filter(func.date(ArchiveList.date_attended) == Searchdate).all()
+            else:
+                info = info.filter(func.date(ArchiveList.date_attended) == Searchdate).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "date":
+            if Searchdate == "" and Search == "":
+                info = info.order_by(ArchiveList.date_attended).all()
+            else:
+                info = info.filter(func.date(ArchiveList.date_attended) == Searchdate).all()
+                if info == []:
+                    flash(message,'danger') 
+        # ID Number
+        message = "There are no members currently with the ID Number "+ Search + "."
+        if drop == "Id" and order =="Ac":
+            if Search == "":
+                info = info.order_by(ArchiveList.member_id).all()
+            else:
+                info = info.filter_by( member_id = Search ).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "Id" and order =="Dc":
+            if Search == "":
+               
+                info = info.order_by(desc(ArchiveList.member_id)).all()
+            else:
+                info = info.filter_by( member_id = Search ).all()
+            if info == []:
+                flash(message,'danger')
+        elif drop == "Id":
+            if Search == "":
+                info = info.order_by(ArchiveList.member_id).all()
+            else:
+                info = info.filter_by( member_id = Search ).all()
+                if info == []:
+                    flash(message,'danger')       
+        return render_template('Archive.html',form = myform,  attendee = info)            
+    return render_template('Archive.html',form = myform, attendee = get_archive_info(),  member = info)
 
 @app.route('/checkattendance')
 @login_required
