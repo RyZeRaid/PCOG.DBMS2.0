@@ -1,4 +1,11 @@
 # PCOG.DBMS 
+# BY
+# Sudhish Sepaul
+# Onandi Skeen 
+# Nikaylia Gayle 
+# Jamaal Henry
+# Ajani Lewis
+# Shondell Mitchell
 
 Remember to always create a virtual environment and install the packages in your requirements file
 

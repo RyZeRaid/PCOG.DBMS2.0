@@ -376,14 +376,14 @@ def checkedattendance():
     form = CheckForm()
     AttendeeList.query.delete()
     db.session.commit()
-
-    if request.method == "POST":
-
+    print("show me ")
+    if request.method == "POST" and form.validate_on_submit():
+        print("this came here")
         attended_id = request.form.getlist('attended')
 
         for id in attended_id:
             info = Member.query.get_or_404(int(id))
-
+           
             db.session.delete(info)
             db.session.commit()
 
@@ -395,16 +395,16 @@ def checkedattendance():
             db.session.add(info)
             # this include a flush() and create a new primary key
             db.session.commit()
-
+            
             archived_info = Member.query.get_or_404(int(id))
 
             archive = ArchiveList(member_id = archived_info.id, f_name = archived_info.f_name, l_name = archived_info.l_name, phonenum = archived_info.phonenum, email = archived_info.email)
-
+            
             db.session.add(archive)
             db.session.commit()
 
-
         return render_template('CheckAttendace.html', form = form, attendee = get_attendee_info())
+    return render_template('CheckAttendace.html', form = form, attendee = get_attendee_info())
 
 @app.route('/generateattendee')
 @login_required
